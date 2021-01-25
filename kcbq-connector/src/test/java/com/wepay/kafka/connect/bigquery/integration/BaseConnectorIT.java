@@ -19,30 +19,7 @@
 
 package com.wepay.kafka.connect.bigquery.integration;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import com.google.cloud.bigquery.BigQuery;
-import com.google.cloud.bigquery.Field;
-import com.google.cloud.bigquery.FieldValue;
-import com.google.cloud.bigquery.QueryJobConfiguration;
-import com.google.cloud.bigquery.Schema;
-import com.google.cloud.bigquery.Table;
-import com.google.cloud.bigquery.TableResult;
+import com.google.cloud.bigquery.*;
 import com.wepay.kafka.connect.bigquery.BigQueryHelper;
 import com.wepay.kafka.connect.bigquery.config.BigQuerySinkConfig;
 import com.wepay.kafka.connect.bigquery.utils.FieldNameSanitizer;
@@ -60,13 +37,17 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.google.cloud.bigquery.LegacySQLTypeName.BOOLEAN;
-import static com.google.cloud.bigquery.LegacySQLTypeName.BYTES;
-import static com.google.cloud.bigquery.LegacySQLTypeName.DATE;
-import static com.google.cloud.bigquery.LegacySQLTypeName.FLOAT;
-import static com.google.cloud.bigquery.LegacySQLTypeName.INTEGER;
-import static com.google.cloud.bigquery.LegacySQLTypeName.STRING;
-import static com.google.cloud.bigquery.LegacySQLTypeName.TIMESTAMP;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static com.google.cloud.bigquery.LegacySQLTypeName.*;
 import static org.apache.kafka.connect.runtime.ConnectorConfig.CONNECTOR_CLASS_CONFIG;
 import static org.apache.kafka.connect.runtime.ConnectorConfig.TASKS_MAX_CONFIG;
 import static org.apache.kafka.test.TestUtils.waitForCondition;
@@ -83,6 +64,7 @@ public abstract class BaseConnectorIT {
   private static final String GCS_BUCKET_ENV_VAR = "KCBQ_TEST_BUCKET";
   private static final String GCS_FOLDER_ENV_VAR = "KCBQ_TEST_FOLDER";
   private static final String TEST_NAMESPACE_ENV_VAR = "KCBQ_TEST_TABLE_SUFFIX";
+  private static final String ALLOW_BUCKET_CREATION_DELETION_ENV_VAR = "KCBQ_TEST_ALLOW_BUCKET_CREATION_DELETION";
 
   protected static final long OFFSET_COMMIT_INTERVAL_MS = TimeUnit.SECONDS.toMillis(10);
   protected static final long COMMIT_MAX_DURATION_MS = TimeUnit.MINUTES.toMillis(5);
@@ -379,5 +361,9 @@ public abstract class BaseConnectorIT {
 
   protected String tableSuffix() {
     return readEnvVar(TEST_NAMESPACE_ENV_VAR, "");
+  }
+
+  protected String bucketCreationDeletionAllowed() {
+    return readEnvVar(ALLOW_BUCKET_CREATION_DELETION_ENV_VAR, "true");
   }
 }

@@ -19,18 +19,16 @@
 
 package com.wepay.kafka.connect.bigquery.config;
 
-import static org.junit.Assert.assertTrue;
-
 import com.wepay.kafka.connect.bigquery.SinkPropertiesFactory;
-
 import com.wepay.kafka.connect.bigquery.convert.BigQueryRecordConverter;
 import com.wepay.kafka.connect.bigquery.convert.BigQuerySchemaConverter;
 import org.apache.kafka.common.config.ConfigException;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 public class BigQuerySinkConfigTest {
   private SinkPropertiesFactory propertiesFactory;
@@ -76,6 +74,17 @@ public class BigQuerySinkConfigTest {
         BigQuerySinkConfig.AVRO_DATA_CACHE_SIZE_CONFIG,
         "-1"
     );
+
+    new BigQuerySinkConfig(badConfigProperties);
+  }
+
+  @Test(expected = ConfigException.class)
+  public void testBadBatchLoadConfig(){
+    Map<String, String> badConfigProperties = propertiesFactory.getProperties();
+
+    badConfigProperties.put(BigQuerySinkConfig.GCS_BUCKET_NAME_CONFIG, "myBucket");
+    badConfigProperties.put(BigQuerySinkConfig.ENABLE_BATCH_CONFIG, "topic");
+    badConfigProperties.put(BigQuerySinkConfig.ENABLE_BATCH_REGEX_CONFIG, ".*");
 
     new BigQuerySinkConfig(badConfigProperties);
   }
