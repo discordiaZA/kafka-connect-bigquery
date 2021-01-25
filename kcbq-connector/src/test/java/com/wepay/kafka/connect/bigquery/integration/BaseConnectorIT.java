@@ -382,7 +382,8 @@ public abstract class BaseConnectorIT {
     return readEnvVar(TEST_NAMESPACE_ENV_VAR, "");
   }
 
-  protected String bucketCreationDeletionAllowed() {
-    return readEnvVar(ALLOW_BUCKET_CREATION_DELETION_ENV_VAR, "true");
+  protected Boolean bucketCreationDeletionAllowed() {
+    String foo = readEnvVar(ALLOW_BUCKET_CREATION_DELETION_ENV_VAR);
+    return Boolean.parseBoolean(readEnvVar(ALLOW_BUCKET_CREATION_DELETION_ENV_VAR, "true"));
   }
 }

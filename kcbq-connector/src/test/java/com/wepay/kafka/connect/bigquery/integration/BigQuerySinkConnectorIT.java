@@ -169,7 +169,7 @@ public class BigQuerySinkConnectorIT extends BaseConnectorIT {
     Collection<String> tables = TEST_TOPICS.stream()
         .map(this::suffixedAndSanitizedTable)
         .collect(Collectors.toSet());
-    BucketClearer.clearBucket(keyFile(), project(), gcsBucket(), gcsFolder(), keySource(), false);
+    BucketClearer.clearBucket(keyFile(), project(), gcsBucket(), gcsFolder(), keySource(), bucketCreationDeletionAllowed());
     TableClearer.clearTables(newBigQuery(), dataset(), tables);
 
     startConnect();
@@ -215,12 +215,6 @@ public class BigQuerySinkConnectorIT extends BaseConnectorIT {
 
     waitForCommittedRecords(
         "bigquery-connector", TEST_TOPICS, numRecordsProduced, tasksMax, TimeUnit.MINUTES.toMillis(3));
-
-    Map<String, List<List<Object>>> foo = TEST_CASES;
-    Map<String, List<List<Object>>> foo2 = TEST_CASES.entrySet()
-            .stream()
-            .filter(entry -> entry.getKey().matches(""))
-            .collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
 
     TEST_CASES.forEach(this::verify);
   }
