@@ -19,16 +19,18 @@
 
 package com.wepay.kafka.connect.bigquery.config;
 
+import static org.junit.Assert.assertTrue;
+
 import com.wepay.kafka.connect.bigquery.SinkPropertiesFactory;
+
 import com.wepay.kafka.connect.bigquery.convert.BigQueryRecordConverter;
 import com.wepay.kafka.connect.bigquery.convert.BigQuerySchemaConverter;
 import org.apache.kafka.common.config.ConfigException;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
 
 public class BigQuerySinkConfigTest {
   private SinkPropertiesFactory propertiesFactory;
